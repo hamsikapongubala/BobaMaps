@@ -1,1 +1,1 @@
-# BobaMaps
+# SmallWorldGraph
