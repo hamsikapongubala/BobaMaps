@@ -1,94 +1,58 @@
-import sys
-
+import queue
 
 class Graph():
-
-    def __init__(self, vertices):
+    def __init__(self,vertices):
         self.V = vertices
-        self.graph = [[0 for column in range(vertices)]
+        self.edges = [[0 for column in range(vertices)]
                       for row in range(vertices)]
-        self.dist = None
 
-    def printSolution(self):
-        print("Vertex \tDistance from Source")
-        for node in range(self.V):
-            print(node, "\t", self.dist[node])
+    def minDistBFS(self, u, v):
+        # visited[n] for keeping track
+        # of visited node in BFS
+        visited = [0] * self.V
 
-    def SmallWorldNum(self, src, friend):
+        # Initialize distances as 0
+        distance = [0] * self.V
 
-        self.dijkstra(src)
+        # queue to do BFS.
+        Q = queue.Queue()
+        distance[u] = 0
 
-        for node in range(self.V):
-            if node == friend:
-                result = self.dist[node]
-        print(src, " is ", result, " edges aways from ", friend)
+        Q.put(u)
+        visited[u] = True
+        while (not Q.empty()):
+            x = Q.get()
 
+            for i in range(len(self.edges[x])):
+                if (visited[self.edges[x][i]]):
+                    continue
 
-    # minimum distance value, from the set of vertices
-    # not yet included in shortest path tree
-    def minDistance(self, sptSet):
+                # update distance for i
+                distance[self.edges[x][i]] = distance[x] + 1
+                Q.put(self.edges[x][i])
+                visited[self.edges[x][i]] = 1
+        return distance[v]
 
-        # Initilaize minimum distance for next node
-        min = sys.maxsize
+    def addEdge(self, u, v):
+        self.edges[u].append(v)
+        self.edges[v].append(u)
 
-        # Search not nearest vertex not in the
-        # shortest path tree
-        for v in range(self.V):
-            if self.dist[v] < min and sptSet[v] == False:
-                min = self.dist[v]
-                min_index = v
-
-        return min_index
-
-        # Funtion that implements Dijkstra's single source
-
-    # shortest path algorithm for a graph represented
-    # using adjacency matrix representation
-    def dijkstra(self, src):
-
-        self.dist = [sys.maxsize] * self.V
-        self.dist[src] = 0
-        sptSet = [False] * self.V
-
-        for cout in range(self.V):
-
-            # Pick the minimum distance vertex from
-            # the set of vertices not yet processed.
-            # u is always equal to src in first iteration
-            u = self.minDistance(sptSet)
-
-            # Put the minimum distance vertex in the
-            # shotest path tree
-            sptSet[u] = True
-
-            # Update dist value of the adjacent vertices
-            # of the picked vertex only if the current
-            # distance is greater than new distance and
-            # the vertex in not in the shotest path tree
-            for v in range(self.V):
-                if self.graph[u][v] > 0 and sptSet[v] == False and \
-                        self.dist[v] > self.dist[u] + self.graph[u][v]:
-                    self.dist[v] = self.dist[u] + self.graph[u][v]
-
-        self.printSolution()
-
-    # Driver program
-
-def main():
+# Driver  Code
+if __name__ == '__main__':
     g = Graph(9)
-    g.graph = [[0, 1, 0, 0, 0, 0, 0, 1, 0],
-        [1, 0, 1, 0, 0, 0, 0, 1, 0],
-        [0, 1, 0, 1, 0, 1, 0, 0, 1],
-        [0, 0, 1, 0, 1, 1, 0, 0, 0],
-        [0, 0, 0, 1, 0, 1, 0, 0, 0],
-        [0, 0, 1, 1, 1, 0, 1, 0, 0],
-        [0, 0, 0, 0, 0, 1, 0, 1, 1],
-        [1, 1, 0, 0, 0, 0, 1, 0, 1],
-        [0, 0, 1, 0, 0, 0, 1, 1, 0]
-        ];
+    edges = [[] for i in range(9)]
+    g.addEdge(0, 1)
+    g.addEdge(0, 7)
+    g.addEdge(1, 7)
+    g.addEdge(1, 2)
+    g.addEdge(2, 3)
+    g.addEdge(2, 5)
+    g.addEdge(2, 8)
+    g.addEdge(3, 4)
+    g.addEdge(3, 5)
+    g.addEdge(4, 5)
+    g.addEdge(5, 6)
+    g.addEdge(6, 7)
+    g.addEdge(7, 8)
 
-    g.dijkstra(0);
-
-    g.SmallWorldNum(0, 8)
-
-main()
+    print(g.minDistBFS(5,1))
