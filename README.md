@@ -1,4 +1,5 @@
 # SmallWorldGraph
+It’s a Small World Graph is a project of finding the shortest connection between two individuals of Gokay’s CMPE 130 class utilizing Slack’s Donut Date data.
 
 ## Getting Started
 
